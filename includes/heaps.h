@@ -6,8 +6,9 @@
 #include <math.h>
 #include <limits.h>
 
-const double GOLDEN_RATIO = 1.61803398875;
+#define GOLDEN_RATIO 1.61803398875
 
+typedef struct fibnode fibnode;
 
 typedef struct{
     int key;
@@ -20,7 +21,7 @@ typedef struct{
     heapnode *nodes;
 }minheap;
 
-typedef struct{
+struct fibnode{
     int key;
     char *value;
     fibnode *parent;
@@ -29,7 +30,7 @@ typedef struct{
     fibnode *right;
     int degree;
     int mark;
-}fibnode;
+};
 
 typedef struct{
     fibnode *min;

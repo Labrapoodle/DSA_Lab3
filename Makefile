@@ -7,7 +7,7 @@ all: Lab3
 -include main.d minheap.d fibheap.d
 
 Lab3: build/main.o build/libminheap.a build/fibheap.a
-	gcc -Iincludes/ $(CFLAGS) $^ -o $@
+	gcc -Iincludes/ $(CFLAGS) $^ -o $@ -lm
 	rm build/main.d
 	rm build/main.o
 	rm build/minheap.o
@@ -16,7 +16,7 @@ Lab3: build/main.o build/libminheap.a build/fibheap.a
 	rm build/fibheap.d
 
 build/main.o: src/main.c
-	gcc -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+	gcc -c $(CFLAGS) $(CPPFLAGS)  $< -o $@
 
 build/libminheap.a: build/minheap.o
 	ar rcs $@ $^
@@ -28,4 +28,4 @@ build/fibheap.a: build/fibheap.o
 	ar rcs $@ $^
 
 build/fibheap.o: src/fibheap.c
-	gcc -c $(CPPFLAGS) $< -o $@
+	gcc -c $(CPPFLAGS)  $< -o $@
