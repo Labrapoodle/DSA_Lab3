@@ -99,20 +99,50 @@ void fibheap_link_lists(fibnode *min1, fibnode *min2)
 
 fibnode *fibheap_extractmin(fibheap *heap)
 {
+    
     if(heap == NULL || heap->min == NULL) return NULL;
+    if(heap->min != NULL) printf("min->key: %d; min-degree: %d; amount: %d; next: %d; last: %d;\n",
+        heap->min->key,heap->min->degree,heap->amount,heap->min->right->key,heap->min->left->key);
+    if(heap->min->child!=NULL) printf("\tmin-child: %d\n", heap->min->child->key);
     fibnode *z = heap->min;
     if(z->child != NULL)
     {
+        
         fibnode *childIter = z->child;
+        int iterationCounter = 0;
         do
         {
+            
+            fibnode *next = childIter->right;
+            if(childIter == next)
+            {
+                
+                z->child = NULL;
+                
+            } 
+            else 
+            {
+                z->child = next;
+                
+                next->left = childIter->left;
+                next->left->right = next;
+            }
+            
+            
+            
+            
             fibheap_add_to_rootList(childIter, heap);
             childIter->parent = NULL;
-            childIter = childIter->right;
-        }while(childIter != z->child);
+
+            
+            childIter = next;
+            iterationCounter++;
+            
+        }while(z->child != NULL);
     }
     
     fibheap_remove_from_nodeList(heap, z);
+    
     if(z == z->right) heap->min = NULL;
     else
     {
@@ -142,40 +172,7 @@ void fibheap_remove_from_nodeList(fibheap *heap, fibnode *deletable)
     if(heap->min == deletable) heap->min = right;
 }
 
-/* Возможно вообще не нужна
-void fibheapp_swap(fibnode *first, fibnode *second){
-    fibnode temp = *first;
-    if(first->right != first)
-    {
-        first->left->right = second;
-        first->right->left = second;
-    }    
-    if(second->right != second)
-    {
-        second->left->right = first;
-        second->right->left = first;
-    }
-    
-    first->value = second->value;
-    first->parent = second->parent;
-    first->child = second->child;
-    first->left = second->left;
-    first->right = second->right;
-    first->degree = second->degree;
-    first->mark = second->mark;
 
-    second->value  = temp.value;
-    second->parent = temp.parent;
-    second->child  = temp.child;
-    second->left   = temp.left;
-    second->right  = temp.right;
-    second->degree = temp.degree;
-    second->mark   = temp.mark;    
-    
-
-
-}
-*/
 
 void fibheap_consolidate(fibheap *heap)
 {
@@ -183,7 +180,7 @@ void fibheap_consolidate(fibheap *heap)
     
     int maxDegree = (int)log(heap->amount)/log(GOLDEN_RATIO) + 1;
     fibnode *degArray[maxDegree];
-
+    
     for(int i=0; i<maxDegree; i++)
     {
         degArray[i]=NULL;
@@ -191,23 +188,27 @@ void fibheap_consolidate(fibheap *heap)
 
     if(heap->min == NULL) return;
     if(heap->min->right == heap->min) return;
-
+    
     fibnode *nodeIterator = heap->min;
     int firstIterationFlag = 1;
     
     do
     {
+        
         fibnode *next = nodeIterator->right;
         int nodeDegree = nodeIterator->degree;
-        while(degArray[nodeDegree]!=NULL)
+        
+        while(nodeDegree<=maxDegree && degArray[nodeDegree]!=NULL)
         {
+            
             fibnode *y = degArray[nodeDegree];
-            if(nodeIterator->key < y->key)
-            {
+            if(nodeIterator->key > y->key)
+            {                
                 fibnode *temp = nodeIterator;
                 nodeIterator = y;
                 y = temp;
             }
+            
             fibheap_link(heap, y, nodeIterator);
             degArray[nodeDegree] = NULL;
             nodeDegree++;
@@ -216,10 +217,12 @@ void fibheap_consolidate(fibheap *heap)
         nodeIterator = next;
         firstIterationFlag =0;
     }while(nodeIterator != heap->min || firstIterationFlag );
+    
+    
 
     heap->min = NULL;   
     
-
+    
     for(int i=0; i<maxDegree; i++)
     {
         if(degArray[i] != NULL)

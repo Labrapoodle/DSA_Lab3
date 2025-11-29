@@ -23,6 +23,9 @@ void test_create_and_insert() {
     //fibnode *node3 = fibheap_insert(heap, 15, "node15");
     assert(heap->min == node2);
     assert(heap->amount == 3);
+
+    fibheap_free(heap->min);
+    free(heap);
     
     printf("✓ Create and Insert passed\n");
 }
@@ -46,6 +49,9 @@ void test_min_operation() {
     min_node = fibheap_min(heap);
     assert(min_node->key == 3);
     
+    fibheap_free(heap->min);
+    free(heap);
+
     printf("✓ Min Operation passed\n");
 }
 
@@ -66,17 +72,23 @@ void test_extract_min() {
     assert(min->key == 3);
     assert(heap->amount == 4);
     assert(heap->min->key == 5);
+    free(min);
     
     min = fibheap_extractmin(heap);
     assert(min->key == 5);
     assert(heap->amount == 3);
     assert(heap->min->key == 7);
+    free(min);
     
     min = fibheap_extractmin(heap);
     assert(min->key == 7);
     assert(heap->amount == 2);
     assert(heap->min->key == 10);
+    free(min);
     
+    fibheap_free(heap->min);
+    free(heap);
+
     printf("✓ Extract Min passed\n");
 }
 
@@ -105,6 +117,9 @@ void test_decrease_key() {
     assert(result == NULL);
     assert(node10->key == 10);
     
+    fibheap_free(heap->min);
+    free(heap);
+
     printf("✓ Decrease Key passed\n");
 }
 
@@ -129,12 +144,15 @@ void test_delete() {
     // Проверяем, что элемент действительно удален
     fibnode *lookup_result = fibheap_lookup(heap->min, 15);
     assert(lookup_result == NULL);
-    
+    free(deleted);
     // Пытаемся удалить несуществующий элемент
     deleted = fibheap_delete(heap, 999);
     assert(deleted == NULL);
     assert(heap->amount == 4);
     
+    fibheap_free(heap->min);
+    free(heap);
+
     printf("✓ Delete passed\n");
 }
 
@@ -153,6 +171,11 @@ void test_union() {
     assert(merged->amount == 4);
     assert(merged->min->key == 3);
     
+    fibheap_free(merged->min);
+    free(merged);
+
+
+
     printf("✓ Union passed\n");
 }
 
@@ -163,7 +186,8 @@ void test_edge_cases() {
     fibheap *empty_heap = fibheap_create();
     assert(fibheap_extractmin(empty_heap) == NULL);
     assert(fibheap_min(empty_heap) == NULL);
-    
+    fibheap_free(empty_heap->min);
+    free(empty_heap);
     // Тест с одним элементом
     fibheap *single_heap = fibheap_create();
     fibnode *single = fibheap_insert(single_heap, 42, "single");
@@ -177,7 +201,8 @@ void test_edge_cases() {
     
     // Тест lookup в пустой куче
     assert(fibheap_lookup(NULL, 10) == NULL);
-    
+    fibheap_free(single_heap->min);
+    free(single_heap);
     printf("✓ Edge Cases passed\n");
 }
 
@@ -202,6 +227,7 @@ void test_complex_scenario() {
     for (int i = 0; i < 5; i++) {
         fibnode *min = fibheap_extractmin(heap);
         assert(min != NULL);
+        free(min);
     }
     
     assert(heap->amount == 5);
@@ -211,9 +237,11 @@ void test_complex_scenario() {
     assert(heap->min->key == 2);
     
     // Удаляем элемент
-    fibheap_delete(heap, 25);
+    fibnode *deleted = fibheap_delete(heap, 30);
+    free(deleted);
     assert(heap->amount == 4);
-    
+    fibheap_free(heap->min);
+    free(heap);
     printf("✓ Complex Scenario passed\n");
 }
 
@@ -233,15 +261,12 @@ void test_memory_management() {
     
     // Извлекаем все элементы
     while (heap->amount > 0) {
-        fibnode *min = fibheap_extractmin(heap);
-        assert(min != NULL);
-    }
+        0.
     
     assert(heap->min == NULL);
     assert(heap->amount == 0);
     
-    printf("✓ Memory Management passed\n");
-}
+    printf("✓ Memory Management passed\n"); 
 
 void run_all_tests() {
     printf("Starting Fibonacci Heap Tests...\n\n");

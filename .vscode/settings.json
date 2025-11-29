@@ -3,5 +3,6 @@
         "stdlib.h": "c",
         "heaps.h": "c",
         "string.h": "c"
-    }
+    },
+    "makefile.configureOnOpen": true
 }
