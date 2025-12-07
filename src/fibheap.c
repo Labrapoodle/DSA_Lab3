@@ -133,22 +133,27 @@ fibnode *fibheap_extractmin(fibheap *heap)
             
             fibheap_add_to_rootList(childIter, heap);
             childIter->parent = NULL;
-
+            
             
             childIter = next;
             iterationCounter++;
+            
             
         }while(z->child != NULL);
     }
     
     fibheap_remove_from_nodeList(heap, z);
     
+    
     if(z == z->right) heap->min = NULL;
     else
     {
         heap->min = z->right;
+        
         fibheap_consolidate(heap);
+        
     }
+    
     heap->amount--;
     return z;
 }
@@ -165,11 +170,14 @@ void fibheap_remove_from_nodeList(fibheap *heap, fibnode *deletable)
     }
     fibnode *left = deletable->left;
     fibnode *right = deletable->right;
-
+    
     left->right = right;
     right->left = left;
-
+    
+    
+    
     if(heap->min == deletable) heap->min = right;
+    
 }
 
 
@@ -185,7 +193,7 @@ void fibheap_consolidate(fibheap *heap)
     {
         degArray[i]=NULL;
     }
-
+    
     if(heap->min == NULL) return;
     if(heap->min->right == heap->min) return;
     
@@ -194,11 +202,11 @@ void fibheap_consolidate(fibheap *heap)
     
     do
     {
-        
+        printf("\033[31mz->key: jopa , heap->min: %d\033[0m\n", heap->min->key);
         fibnode *next = nodeIterator->right;
         int nodeDegree = nodeIterator->degree;
         
-        while(nodeDegree<=maxDegree && degArray[nodeDegree]!=NULL)
+        while(nodeDegree<maxDegree && degArray[nodeDegree]!=NULL)
         {
             
             fibnode *y = degArray[nodeDegree];
@@ -216,7 +224,7 @@ void fibheap_consolidate(fibheap *heap)
         degArray[nodeDegree] = nodeIterator;
         nodeIterator = next;
         firstIterationFlag =0;
-    }while(nodeIterator != heap->min || firstIterationFlag );
+    }while(nodeIterator != heap->min  || firstIterationFlag );
     
     
 

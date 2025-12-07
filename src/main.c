@@ -261,12 +261,16 @@ void test_memory_management() {
     
     // Извлекаем все элементы
     while (heap->amount > 0) {
-        0.
-    
+        
+        fibnode *min = fibheap_extractmin(heap);
+        printf("\t\t\033[33mkek\033[0m\n");
+        assert(min != NULL);
+    }
     assert(heap->min == NULL);
     assert(heap->amount == 0);
     
-    printf("✓ Memory Management passed\n"); 
+    printf("✓ Memory Management passed\n");
+} 
 
 void run_all_tests() {
     printf("Starting Fibonacci Heap Tests...\n\n");
