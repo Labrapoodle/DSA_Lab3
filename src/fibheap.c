@@ -101,9 +101,7 @@ fibnode *fibheap_extractmin(fibheap *heap)
 {
     
     if(heap == NULL || heap->min == NULL) return NULL;
-    if(heap->min != NULL) printf("min->key: %d; min-degree: %d; amount: %d; next: %d; last: %d;\n",
-        heap->min->key,heap->min->degree,heap->amount,heap->min->right->key,heap->min->left->key);
-    if(heap->min->child!=NULL) printf("\tmin-child: %d\n", heap->min->child->key);
+   
     fibnode *z = heap->min;
     if(z->child != NULL)
     {
@@ -187,6 +185,7 @@ void fibheap_consolidate(fibheap *heap)
     if(heap== NULL || heap->amount<1) return;
     
     int maxDegree = (int)log(heap->amount)/log(GOLDEN_RATIO) + 1;
+    
     fibnode *degArray[maxDegree];
     
     for(int i=0; i<maxDegree; i++)
@@ -195,14 +194,19 @@ void fibheap_consolidate(fibheap *heap)
     }
     
     if(heap->min == NULL) return;
-    if(heap->min->right == heap->min) return;
+    if(heap->min->right == heap->min)
+    {
+        
+        return;
+    }
     
     fibnode *nodeIterator = heap->min;
     int firstIterationFlag = 1;
+    int iterationsCap = 0;
     
     do
     {
-        printf("\033[31mz->key: jopa , heap->min: %d\033[0m\n", heap->min->key);
+        
         fibnode *next = nodeIterator->right;
         int nodeDegree = nodeIterator->degree;
         
@@ -210,6 +214,7 @@ void fibheap_consolidate(fibheap *heap)
         {
             
             fibnode *y = degArray[nodeDegree];
+            
             if(nodeIterator->key > y->key)
             {                
                 fibnode *temp = nodeIterator;
@@ -222,12 +227,16 @@ void fibheap_consolidate(fibheap *heap)
             nodeDegree++;
         }
         degArray[nodeDegree] = nodeIterator;
-        nodeIterator = next;
-        firstIterationFlag =0;
-    }while(nodeIterator != heap->min  || firstIterationFlag );
-    
-    
 
+        if(next!=nodeIterator->child) nodeIterator = next;
+
+        firstIterationFlag =0;
+        iterationsCap++;
+        
+    }while((nodeIterator != heap->min  || firstIterationFlag) && iterationsCap < 100 );
+    
+    
+    
     heap->min = NULL;   
     
     
@@ -368,4 +377,79 @@ void fibheap_free(fibnode *node)
     
     
 }
-//malloc
+
+void fibheap_print_basic(fibheap *heap) {
+    if (heap == NULL || heap->min == NULL) {
+        printf("Куча пуста\n");
+        return;
+    }
+    
+    printf("\n=== Фибоначчиева куча ===\n");
+    printf("Минимальный: %d, Всего: %d\n\n", heap->min->key, heap->amount);
+    
+    fibnode *root = heap->min;
+    fibnode *current_root = root;
+    int root_count = 0;
+    
+    // Обработка всех деревьев в корневом списке
+    do {
+        root_count++;
+        printf("Дерево %d (корень: %d, степень: %d):\n", 
+               root_count, current_root->key, current_root->degree);
+        
+        // Стек для обхода дерева
+        fibnode *stack[100];
+        int depth_stack[100];
+        int top = -1;
+        
+        // Помещаем первый узел в стек
+        stack[++top] = current_root;
+        depth_stack[top] = 0;
+        
+        while (top >= 0) {
+            // Извлекаем узел из стека
+            fibnode *node = stack[top];
+            int depth = depth_stack[top];
+            top--;
+            
+            // Печатаем узел с отступами
+            for (int i = 0; i < depth; i++) {
+                printf("  ");
+            }
+            
+            printf("%d", node->key);
+            if (node->value != NULL) {
+                printf(" (%s)", node->value);
+            }
+            if (node->mark) printf("*");
+            printf("\n");
+            
+            // Добавляем всех братьев в стек
+            if (node->child != NULL) {
+                fibnode *child = node->child;
+                fibnode *first_child = child;
+                
+                // Сначала находим самого правого ребенка
+                fibnode *rightmost = child;
+                while (rightmost->right != first_child) {
+                    rightmost = rightmost->right;
+                }
+                
+                // Добавляем детей в стек в правильном порядке
+                fibnode *current = rightmost;
+                do {
+                    // Помещаем в стек
+                    stack[++top] = current;
+                    depth_stack[top] = depth + 1;
+                    current = current->left;
+                } while (current != rightmost);
+            }
+        }
+        
+        printf("\n");
+        current_root = current_root->right;
+        
+    } while (current_root != root);
+    
+    printf("==========================\n\n");
+}

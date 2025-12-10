@@ -56,6 +56,7 @@ heapnode *minheap_decrease_key(minheap *heap,int key, int newkey);
 
 //fibheap:
 void fibheap_free(fibnode *min);
+void fibheap_print_basic(fibheap *heap);
 void fibheap_consolidate(fibheap *heap);
 void fibheap_link_lists(fibnode *h1, fibnode *h2);
 void fibheap_cascading_cut(fibheap *heap, fibnode *node);

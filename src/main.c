@@ -201,6 +201,7 @@ void test_edge_cases() {
     
     // Тест lookup в пустой куче
     assert(fibheap_lookup(NULL, 10) == NULL);
+    free(extracted);
     fibheap_free(single_heap->min);
     free(single_heap);
     printf("✓ Edge Cases passed\n");
@@ -261,14 +262,16 @@ void test_memory_management() {
     
     // Извлекаем все элементы
     while (heap->amount > 0) {
-        
+        //if(heap->amount == 3) fibheap_print_basic(heap); 
         fibnode *min = fibheap_extractmin(heap);
-        printf("\t\t\033[33mkek\033[0m\n");
+        
         assert(min != NULL);
+        free(min);
     }
     assert(heap->min == NULL);
     assert(heap->amount == 0);
-    
+    fibheap_free(heap->min);
+    free(heap);
     printf("✓ Memory Management passed\n");
 } 
 
@@ -278,11 +281,11 @@ void run_all_tests() {
     test_create_and_insert();
     test_min_operation();
     test_extract_min();
-    test_decrease_key();
+    test_decrease_key();    
     test_delete();
-    test_union();
-    test_edge_cases();
-    test_complex_scenario();
+    test_union();    
+    test_edge_cases();    
+    test_complex_scenario();    
     test_memory_management();
     
     printf("\n🎉 All tests passed successfully!\n");
