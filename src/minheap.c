@@ -112,8 +112,9 @@ int minheap_delete(minheap *h, int key)
     int ind = minheap_lookup(h,key);
     if(ind == -1) return -1;
 
-    h->nodes[ind] = h->nodes[--(h->size)];
-    heap_fixup_down(h,ind);
+    minheap_decrease_key(h,key,INT_MIN);
+    minheap_extractmin(h);
+    
     return 0;
 }
 
